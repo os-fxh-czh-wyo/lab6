@@ -130,18 +130,12 @@ void interrupt_handler(struct trapframe *tf)
          */
         clock_set_next_event();
         ticks++;
-        static int num=0;
-        if(ticks==TICK_NUM){
+        if (ticks % TICK_NUM == 0) {
             print_ticks();
-            num++;
-            ticks=0;
         }
-        if(num==10){
-            sbi_shutdown();
+        if (current) {
+            sched_class_proc_tick(current);
         }
-        // lab6: YOUR CODE  (update LAB3 steps)
-        //  在时钟中断时调用调度器的 sched_class_proc_tick 函数
-        if (current) sched_class_proc_tick(current);
         break;
     case IRQ_H_TIMER:
         cprintf("Hypervisor software interrupt\n");
