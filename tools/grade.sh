@@ -160,8 +160,9 @@ run_qemu() {
 
         # make sure that QEMU is dead
         # on OS X, exiting gdb doesn't always exit qemu
-        kill $pid > /dev/null 2>&1
+    wait $pid
     fi
+    wait $pid
 }
 
 build_run() {
@@ -194,7 +195,7 @@ check_result() {
 
     # give qemu some time to run (for asynchronous mode)
     if [ ! -s $qemu_out ]; then
-        sleep 4
+        sleep 8
     fi
 
     if [ ! -s $qemu_out ]; then
@@ -328,7 +329,7 @@ swapimg=$(make_print swapimg)
 qemuopts="-machine virt -nographic -bios default -device loader,file=bin/ucore.img,addr=0x80200000"
 
 ## set break-function, default is readline
-brkfun=readline
+brkfun=
 
 default_check() {
     pts=40
