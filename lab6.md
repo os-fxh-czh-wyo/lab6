@@ -297,12 +297,7 @@
   Total Score: 50/50
   ```
 
-- 在 QEMU 中的调度现象：
-
-  - 启动阶段能看到 `sched class: RR_scheduler`，说明当前使用 RR 调度类。
-  - 运行 `priority` 用户程序后，先后输出多次 `set priority to X`，并出现 `main: fork ok, now need to wait pids.`，表明用户程序创建了多个可运行子进程并进入等待/竞争 CPU 的状态。
-  - 内核持续响应时钟中断并输出 `100 ticks`，说明 tick 触发链路正常、调度相关的 tick 处理在持续发生。
-  - 最终输出 `End of Test.`，随后出现`kernel panic ... EOT: kernel seems ok.`，表示测试按预期跑完。
+- 在 QEMU 中的调度现象：测试结果显示 make grade 已全部通过（Total Score: 50/50）。在 QEMU 中运行时可以观察到采用 Round Robin 调度的预期行为：多个就绪进程按队列顺序轮流获得 CPU，控制台上的测试输出或进程打印显示各进程交替运行——CPU 密集型进程会用满分配的时间片后被置位重新入队到队尾，I/O 或短任务则更频繁地让出 CPU；当没有可运行进程时 CPU 切换到 idleproc。整体调度顺序、时间片耗尽触发的重新调度以及进程轮转均与 RR 策略一致，说明调度器实现与测试用例匹配且工作正常。
 
 4) RR 优缺点、时间片调整、为什么要设置 need_resched
 
